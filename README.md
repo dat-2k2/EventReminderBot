@@ -1,6 +1,10 @@
 - Using JPA so the app is not reactive. 
 - Using Producer-Consumer pattern on 1 thread (LongPollingUpdateConsumer)
 
+## Using
+- In client/src/main/resources/ create file application.properties with 2 fields: bot.name - your bot's name and bot.token - your bot's token (retrieved from Telegram).
+- If you want to change database configuration, change at .env first, then look into docker-compose and database.properties to change respective properties.
+- Run ```docker compose up```.
 ## Encountered Problems
 
 ### Hibernate
@@ -26,5 +30,7 @@ Current Spring only supports JPA up to **3.2.0** (18 Jun 2024)
 To expose the REST APIs, the application needs to run on a server, which means it is an Spring Web application. The web application is packaged in a **war** file, and later copied to a Tomcat server to be active. Current examples often use Spring Boot so the application doesn't need to be deployed, instead an embedded Tomcat server is automatically configured after initialization.
 
 The Telegram Client uses another implementation of Servlet - Jetty; put it in the same package with server using Tomcat causes conflict.
+
+
 
 
