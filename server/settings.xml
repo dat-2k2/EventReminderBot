@@ -1,0 +1,6 @@
+<!--Optional - for manager -->
+<server>
+    <id>ErbServer</id>
+    <username>mavenuser</username>
+    <password>mvnuser</password>
+</server>

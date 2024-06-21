@@ -1,0 +1,15 @@
+ARG work_dir='/erb'
+
+FROM maven:3.9.5 AS build
+WORKDIR ${work_dir}/client
+
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package assembly:single
+
+FROM openjdk:17
+
+WORKDIR ${work_dir}
+COPY --from=build /client/target/*jar-with-dependencies.jar  /client.jar
+
+ENTRYPOINT ["java", "-jar", "client.jar"]

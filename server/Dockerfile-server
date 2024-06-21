@@ -1,0 +1,20 @@
+ARG work_dir='/erb'
+
+FROM maven:3.9.5 AS build
+WORKDIR ${work_dir}/server
+COPY pom.xml .
+COPY src ./src
+## Optional - for manager
+## define users for Tomcat server
+#COPY tomcat-users.xml ${CATALINA_HOME}/conf
+## authenticate builder
+#COPY settings.xml ${MAVEN_HOME}/conf
+RUN mvn clean package
+
+FROM tomcat:jdk17
+
+WORKDIR ${CATALINA_HOME}
+COPY --from=build /server/target/*.war  ${CATALINA_HOME}/webapps/api.war
+
+EXPOSE 8080
+ENTRYPOINT ["catalina.sh", "run"]

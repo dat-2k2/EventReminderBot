@@ -1,0 +1,2 @@
+<!--Optional - for manager -->
+<user password="mvnuser" roles="admin" username="mavenuser"/>
