@@ -1,13 +1,20 @@
 version: "3.8"
-networks:
-  dem:
 services:
-  erb:
+  client:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: client
+      dockerfile: Dockerfile-client
     ports:
       - "8000:5000"
+    depends_on:
+      - server
+
+  server:
+    build:
+      context: server
+      dockerfile: Dockerfile-server
+    ports:
+      - "8080:8080"
     depends_on:
       - db
 
@@ -17,9 +24,9 @@ services:
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: erb
+      POSTGRES_DB: ${DB_NAME}
     ports:
-      - "5433:5433"
+      - "5432:5432"
 
   pgadmin:
     image: dpage/pgadmin4
@@ -29,5 +36,3 @@ services:
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
       - "5050:80"
-    depends_on:
-      - db

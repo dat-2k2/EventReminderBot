@@ -1,0 +1,30 @@
+- Using JPA so the app is not reactive. 
+- Using Producer-Consumer pattern on 1 thread (LongPollingUpdateConsumer)
+
+## Encountered Problems
+
+### Hibernate
+Hibernate doesn't automatically deduce PostgresSQLDialect (though it keeps saying it does later). Needs to configure _Database_/_DatabasePlatform_ (and other properties of jpa) in JpaVendorAdapter.
+
+### Telegram Bot APIs
+Latest versions have lots of changes, recommend to see [examples](https://github.com/rubenlagus/TelegramBotsExample/tree/master). Current stable version for all dependencies is **7.2.0**.
+
+### Database host in Docker
+[Explanation](https://docs.docker.com/network/drivers/bridge/#differences-between-user-defined-bridges-and-the-default-bridge)
+
+>Containers on the default bridge network can only access each other by IP addresses, unless you use the --link option, which is considered legacy. On a user-defined bridge network, containers can resolve each other by name or alias.
+
+>Imagine an application with a web front-end and a database back-end. If you call your containers web and db, the web container can connect to the db container at db, no matter which Docker host the application stack is running on.
+
+So in this case the database url is _{your_db}:5432_, not localhost.
+
+### Spring and JPA
+Current Spring only supports JPA up to **3.2.0** (18 Jun 2024)
+
+### Deployment
+
+To expose the REST APIs, the application needs to run on a server, which means it is an Spring Web application. The web application is packaged in a **war** file, and later copied to a Tomcat server to be active. Current examples often use Spring Boot so the application doesn't need to be deployed, instead an embedded Tomcat server is automatically configured after initialization.
+
+The Telegram Client uses another implementation of Servlet - Jetty; put it in the same package with server using Tomcat causes conflict.
+
+
