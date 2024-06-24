@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User, Long> {
 //    Bind directly, no need to reload domain class every time using query.
 //    @Query takes precedence over queries tagged with @NamedQuery.
-
 }

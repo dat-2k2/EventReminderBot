@@ -1,5 +1,4 @@
 import config.ServerInitializer;
-import controller.UserController;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class ServerApplication {
@@ -8,8 +7,6 @@ public class ServerApplication {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
                 ServerInitializer.class
         );
-
-        context.getBean(UserController.class);
         Thread.currentThread().join();
     }
 }

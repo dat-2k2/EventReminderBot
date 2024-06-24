@@ -1,10 +1,12 @@
 package entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "event")
@@ -17,17 +19,19 @@ public class Event {
     private long id;
 
     @Column(nullable = false)
-    private Instant start;
+    private String summary;
 
     @Column(nullable = false)
-    Long duration;
+    private LocalDateTime start;
+
+    @Column(nullable = false)
+    private Duration duration;
 
     @Enumerated(EnumType.ORDINAL)
     private RepeatType repeat = RepeatType.NONE;
 
-    private String summary;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
 }

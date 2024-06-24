@@ -2,51 +2,35 @@ package services;
 
 import entity.Event;
 import entity.RepeatType;
-import entity.User;
-import repos.EventRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.stereotype.Service;
+import exception.EventNotFound;
+import exception.UserNotFound;
 
-import java.time.Instant;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
-@Service
-public class EventService {
-    @Autowired
-    private EventRepository eventRepository;
+public interface EventService {
 
-    public Event addEvent(Event event){
-        return eventRepository.save(event);
-    }
+    Event addEvent(Event event);
 
-//    assume that the using frequency is low.
-    public List<Event> getEventsByUser(User user){
-        var eventExample = new Event();
-        eventExample.setUser(user);
-        return eventRepository.findAll(Example.of(eventExample));
-    }
+    Event addEvent(long userId, String summary, LocalDateTime start, Duration duration, RepeatType repeatType) throws UserNotFound;
 
-    public List<Event> getEventsByDate(User user, Instant start){
-        var eventExample = new Event();
-        eventExample.setUser(user);
-        eventExample.setStart(start);
+    //    assume that the using frequency is low.
+    Event getEventById(long eventId) throws EventNotFound;
 
-        return eventRepository.findAll(Example.of(eventExample));
-    }
+    List<Event> getEvents(long userId) throws UserNotFound;
 
-    public void deleteEvent(long eventId){
-        eventRepository.deleteById(eventId);
-    }
+    List<Event> getEventsByDate(long userId, LocalDate date) throws UserNotFound;
 
-    public Event updateEvent(long oldEventId, Event newEvent){
-        eventRepository.deleteById(oldEventId);
-        return eventRepository.save(newEvent);
-    }
+    List<Event> getEventsByTime(long userId, LocalTime time) throws UserNotFound;
 
-    public void setRepeatType(long eventId, RepeatType repeatType){
-        eventRepository.changeEventRepeatType(eventId, repeatType);
-    }
+    List<Event> getEventsByDateTime(long userId, LocalDate date, LocalTime time) throws UserNotFound;
 
 
+    List<Event> getEventsInRange(long userId, LocalDateTime start, LocalDateTime end) throws UserNotFound;
+    void deleteEvent(long eventId);
+
+    Event updateEvent(long oldEventId, Event newEvent);
 }

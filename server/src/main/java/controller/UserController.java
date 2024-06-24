@@ -1,38 +1,40 @@
 package controller;
 
 import entity.User;
-import services.UserService;
+import exception.UserNotFound;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import services.UserService;
 
-import java.util.Optional;
+import java.util.List;
+
 @RestController
-@RequestMapping
+@Slf4j
 public class UserController {
     @Autowired
     private UserService userService;
+
     @PostMapping("/signup")
-    public ResponseEntity<User> addUser(@RequestBody User user){
-        try {
-            User _user = userService.addUser(user);
-            return ResponseEntity.ok(_user);
-        }
-        catch (Exception e){
-            return ResponseEntity.internalServerError().body(user);
-        }
+    public @ResponseBody User addUser(@RequestBody User user)  {
+        return userService.addUser(user.getId(), user.getName(), user.getChatId());
     }
 
+//    This is a danger but sorry I got no time to learn Spring Security
+    @GetMapping("/users")
+    public @ResponseBody List<User> allUsers(){
+        return userService.allUsers();
+    }
     @GetMapping("/login/{id}")
-    public ResponseEntity<User> getUser(@PathVariable("id") long id){
-        Optional<User> userData = userService.findUserById(id);
-
-        return userData.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public @ResponseBody User getUser(@PathVariable(value="id") long id) throws UserNotFound {
+        return userService.findUserById(id);
     }
 
-    @GetMapping
-    public @ResponseBody String home() {
-        return "Hello Docker World";
+    @GetMapping("/")
+    public @ResponseBody User home() {
+        userService.addUser(123,"test-user", 234 );
+        return new User(123, "Hello Docker World", 234);
     }
+
+
 }

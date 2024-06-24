@@ -15,9 +15,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class User {
     @Id
-    @Column(name = "id")
     private long id;
 
     @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
+    private long chatId;
+
 }

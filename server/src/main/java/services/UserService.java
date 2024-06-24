@@ -1,23 +1,15 @@
 package services;
 
 import entity.User;
-import repos.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+import exception.UserNotFound;
 
-import java.util.Optional;
+import java.util.List;
 
-@Service
-public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+public interface UserService {
 
-    public User addUser(User user){
-        return userRepository.save(user);
-    }
+    User addUser(long userId, String username, long chatId);
 
-    public Optional<User> findUserById(long id){
-        return userRepository.findById(id);
-    }
+    List<User> allUsers();
+
+    User findUserById(long id) throws UserNotFound;
 }
