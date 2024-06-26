@@ -1,7 +1,8 @@
 
 # Event Reminder Telegram Bot (insecure)
 This is a Telegram bot used to remind events. The Security layer is uncompleted, so the API must be private.
-Link Docker Hub: https://hub.docker.com/repository/docker/mydockerdatto/eventreminderbot/tags
+Link Docker Hub: https://hub.docker.com/repository/docker/mydockerdatto/eventreminderbot/tags.
+In docker-compose.yml, replace ```service.client.build``` with ```service.client.image:mydockerdatto/eventreminderbot:client-latest``` and ```service.server.build``` with ```service.client.image:mydockerdatto/eventreminderbot:server-latest```.
 
 ## Overview
 Recurring an event is specified inside the Event. This keeps the database stable and minimized but requires backend logic or even frontend to find all the recurrences. 
