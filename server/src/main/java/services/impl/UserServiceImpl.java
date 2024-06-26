@@ -20,8 +20,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private EntityManagerFactory entityManagerFactory;
     @Override
-    public User addUser(long userId, String username, long chatId) {
-        return userRepository.findById(userId).orElse(userRepository.save(new User(userId, username, chatId)));
+    public User addUser(long userId, String name, long chatId) {
+        return userRepository.findById(userId).orElse(userRepository.save(new User(userId, name, chatId)));
     }
 
     @Override

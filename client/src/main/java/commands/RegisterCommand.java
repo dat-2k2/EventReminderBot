@@ -8,9 +8,9 @@ import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import utils.RequestFactory;
+import utils.SendMessageUtils;
 
 @Slf4j
 @Component
@@ -21,7 +21,7 @@ public class RegisterCommand extends BotCommand {
 
     @Override
     public void execute(TelegramClient telegramClient, User user, Chat chat, String[] strings) {
-        String userName = chat.getUserName();
+        String userName = user.getUserName();
 
         if (userName == null || userName.isEmpty()) {
             userName = user.getFirstName() + " " + user.getLastName();
@@ -33,7 +33,7 @@ public class RegisterCommand extends BotCommand {
         RequestFactory
             .buildPost("/signup")
             .body(
-                    new UserDto(user.getId(), userName, chat.getId())
+                    new UserDto(user.getId(), user.getUserName(), chat.getId())
             )
             .retrieve()
             .onStatus(httpStatusCode -> httpStatusCode != HttpStatus.OK,
@@ -54,11 +54,6 @@ public class RegisterCommand extends BotCommand {
                     })
                 .toBodilessEntity();
         var answer = new SendMessage(chat.getId().toString(), messageTextBuilder.toString());
-
-        try {
-            telegramClient.execute(answer);
-        } catch (TelegramApiException e) {
-            log.error("Error", e);
-        }
+        SendMessageUtils.sendMessage(telegramClient, answer);
     }
 }

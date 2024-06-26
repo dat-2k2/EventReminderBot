@@ -6,7 +6,7 @@ import exception.UserNotFound;
 import java.util.List;
 public interface UserService {
 
-    User addUser(long userId, String username, long chatId);
+    User addUser(long userId, String name, long chatId);
 
     List<User> allUsers();
 

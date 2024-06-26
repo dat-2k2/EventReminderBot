@@ -8,7 +8,7 @@ This is a Telegram bot used to remind events. The Security layer is uncompleted,
 - Spring REST 
 - Spring JPA + Hibernate ORM
 - PostgreSQL
-- Tomcat Server
+- Tomcat Server 7
 
 ## Features
 ### Event
@@ -23,8 +23,11 @@ This is a Telegram bot used to remind events. The Security layer is uncompleted,
 - Delete recurring events
 ### Reminder
 - Remind about upcoming event (1 hour in advance)
-
-## Using
+## Limitation
+- Recurring an event is specified inside the Event. This keeps database stable and minimized but requires backend logic or even frontend to find all the recurrences.
+If an event was recurred at moment X, message about that event will be shown but the start date is its first recurrence.
+- No security, adding later.
+## Deployment
 In case the application.properties doesn't exist
 - In client/src/main/resources/ create file application.properties with 2 fields: bot.name - your bot's name and
   bot.token - your bot's token (retrieved from Telegram).
@@ -32,7 +35,8 @@ In case the application.properties doesn't exist
   database.properties to change respective properties.
 - Run ```docker compose up```.
 
-## Encountered Problems
+
+## Encountered Problems (while developing)
 
 ### Hibernate
 - Hibernate doesn't automatically deduce PostgresSQLDialect (though it keeps saying it does later). Needs to configure

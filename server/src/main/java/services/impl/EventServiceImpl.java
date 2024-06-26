@@ -6,6 +6,8 @@ import entity.User;
 import exception.EventNotFound;
 import exception.UserNotFound;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import repos.EventRepository;
 import repos.UserRepository;
@@ -16,9 +18,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
+@EnableScheduling
 public class EventServiceImpl implements EventService {
     @Autowired
     private EventRepository eventRepository;

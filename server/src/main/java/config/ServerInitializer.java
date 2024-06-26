@@ -11,7 +11,7 @@ public class ServerInitializer extends AbstractAnnotationConfigDispatcherServlet
     @Override
     protected Class<?>[] getRootConfigClasses() {
         return new Class[]{
-                WebConfiguration.class, DatabaseConfiguration.class, SecurityConfiguration.class
+                WebConfiguration.class, DatabaseConfiguration.class
         };
     }
 
