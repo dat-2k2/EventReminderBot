@@ -1,5 +1,6 @@
 
-# Event Reminder Telegram Bot (insecure)
+# Event Reminder Telegram Bot
+Bot: @hsai_er_bot
 This is a Telegram bot used to remind events. The Security layer is uncompleted, so the API must be private.
 Link Docker Hub: https://hub.docker.com/repository/docker/mydockerdatto/eventreminderbot/tags.
 In docker-compose.yml, replace ```service.client.build``` with ```service.client.image:mydockerdatto/eventreminderbot:client-latest``` and ```service.server.build``` with ```service.client.image:mydockerdatto/eventreminderbot:server-latest```.
