@@ -2,9 +2,7 @@ package commands;
 
 import dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -18,7 +16,7 @@ import utils.RequestFactory;
 @Component
 public class RegisterCommand extends BotCommand {
     public RegisterCommand() {
-        super(CommandId.SIGNUP, "Sign up");
+        super(CommandId.SIGNUP, "Sign up. You will be logged in automatically.");
     }
 
     @Override

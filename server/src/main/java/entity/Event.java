@@ -1,16 +1,17 @@
 package entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "event")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Event {
     @Id
@@ -33,5 +34,4 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
 }

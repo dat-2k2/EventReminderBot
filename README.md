@@ -1,8 +1,31 @@
-- Using JPA so the app is not reactive.
-- Using Producer-Consumer pattern on 1 thread (LongPollingUpdateConsumer)
+
+# Event Reminder Telegram Bot (insecure)
+This is a Telegram bot used to remind events. The Security layer is uncompleted, so the API must be private.
+
+## Dependencies
+- Telegram API (Java)
+- Spring Web MVC
+- Spring REST 
+- Spring JPA + Hibernate ORM
+- PostgreSQL
+- Tomcat Server
+
+## Features
+### Event
+- Create event (summary, date + time, duration)
+- List events (next, day, week)
+- Delete event
+- Update event
+### Recurring events
+- Create reccuring events (hourly, daily, weekly, monthly)
+- Show recurring events
+- Update recurring events
+- Delete recurring events
+### Reminder
+- Remind about upcoming event (1 hour in advance)
 
 ## Using
-
+In case the application.properties doesn't exist
 - In client/src/main/resources/ create file application.properties with 2 fields: bot.name - your bot's name and
   bot.token - your bot's token (retrieved from Telegram).
 - If you want to change database configuration, change at .env first, then look into docker-compose and
@@ -12,7 +35,6 @@
 ## Encountered Problems
 
 ### Hibernate
-
 - Hibernate doesn't automatically deduce PostgresSQLDialect (though it keeps saying it does later). Needs to configure
 _Database_/_DatabasePlatform_ (and other properties of jpa) in JpaVendorAdapter.
 

@@ -1,9 +1,9 @@
 package dto;
 
-public enum RepeatType {
+public enum RepeatTypeDto {
     NONE,
     HOURLY,
     DAILY,
     WEEKLY,
-    MONTHLY
+    MONTHLY;
 }

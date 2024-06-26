@@ -14,7 +14,6 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
-
     @PostMapping("/signup")
     public @ResponseBody User addUser(@RequestBody User user)  {
         return userService.addUser(user.getId(), user.getName(), user.getChatId());
@@ -28,12 +27,6 @@ public class UserController {
     @GetMapping("/login/{id}")
     public @ResponseBody User getUser(@PathVariable(value="id") long id) throws UserNotFound {
         return userService.findUserById(id);
-    }
-
-    @GetMapping("/")
-    public @ResponseBody User home() {
-        userService.addUser(123,"test-user", 234 );
-        return new User(123, "Hello Docker World", 234);
     }
 
 

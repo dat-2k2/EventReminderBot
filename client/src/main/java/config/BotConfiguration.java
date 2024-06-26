@@ -1,10 +1,7 @@
 package config;
 
 import bot.BotService;
-import commands.AddCommand;
-import commands.LoginCommand;
-import commands.RegisterCommand;
-import commands.StartCommand;
+import commands.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -30,20 +27,37 @@ public class BotConfiguration {
     @Autowired
     LoginCommand loginCommand;
     @Autowired
-    StartCommand startCommand;
-    @Autowired
     AddCommand addCommand;
     @Autowired
     RegisterCommand registerCommand;
-
+    @Autowired
+    GetCommand getCommand;
+    @Autowired
+    GetEventsWeekCommand getEventsWeekCommand;
+    @Autowired
+    GetTodayEventsCommand getTodayEventsCommand;
+    @Autowired
+    UpdateStartCommand updateStartCommand;
+    @Autowired
+    UpdateSummaryCommand updateSummaryCommand;
+    @Autowired
+    UpdateDurationCommand updateDurationCommand;
+    HelpCommand helpCommand;
     @Bean
     public BotSession startBotSession(TelegramBotsLongPollingApplication botApplication, BotService bot) throws TelegramApiException {
+        this.helpCommand = new HelpCommand(bot);
 //        register commands here
         bot.registerAll(
-                loginCommand,
+//                loginCommand,
                 registerCommand,
-                startCommand,
-                addCommand
+                addCommand,
+                getCommand,
+                helpCommand,
+                getTodayEventsCommand,
+                getEventsWeekCommand,
+                updateStartCommand,
+                updateSummaryCommand,
+                updateDurationCommand
         );
         return botApplication.registerBot(env.getProperty("bot.token"), bot);
     }

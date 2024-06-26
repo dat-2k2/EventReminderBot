@@ -1,5 +1,7 @@
 package bot;
 
+import callback.CallbackData;
+import commands.CommandId;
 import dto.EventDto;
 import dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
@@ -7,15 +9,18 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.extensions.bots.commandbot.CommandLongPollingTelegramBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import utils.DurationParser;
 import utils.RequestFactory;
+import utils.SendMessageUtils;
 
-import java.time.*;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.Map;
 
 import static utils.SendMessageUtils.prepareAndSendMessage;
 
@@ -27,6 +32,7 @@ import static utils.SendMessageUtils.prepareAndSendMessage;
 public class BotService extends CommandLongPollingTelegramBot {
     static Clock clock = Clock.system(ZoneId.of("Europe/Moscow"));
 
+    private Map<Long, LocalDateTime> history = new HashMap<>();
     private static final String ERROR_TEXT = "Error when sending message: ";
     //    services
 //    private final EventService events;
@@ -39,18 +45,17 @@ public class BotService extends CommandLongPollingTelegramBot {
 
     @Override
     public void processNonCommandUpdate(Update update) {
-        if (update.hasMessage()) {
-            var message = update.getMessage();
-            if (message.hasText()) {
-                SendMessage echoMessage = new SendMessage(String.valueOf(message.getChatId()),
-                        "Hey heres your message:\n" + message.getText());
-                try {
-                    telegramClient.execute(echoMessage);
-                } catch (TelegramApiException e) {
-                    log.error("Error processing non-command update", e);
-                }
-            }
+        if (update.hasCallbackQuery()){
+            var callbackQueryData = update.getCallbackQuery().getData();
+            System.out.println(callbackQueryData);
+            CallbackData.parse(callbackQueryData).execute(telegramClient, update.getCallbackQuery().getFrom());
         }
+
+    }
+
+    @Override
+    public void processInvalidCommandUpdate(Update update) {
+        SendMessageUtils.prepareAndSendMessage(telegramClient, update.getMessage().getChatId(), "Invalid comment. See " + CommandId.HELP);
     }
 
     /**
@@ -59,56 +64,60 @@ public class BotService extends CommandLongPollingTelegramBot {
     @Scheduled(fixedRate = 997)
     private void notice(){
 
-        LocalDateTime currentDateTime = LocalDateTime.now().plusHours(30);
-        System.out.println(currentDateTime);
-        LocalDate currentDate = LocalDate.parse(currentDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        LocalTime currentTime = LocalTime.parse(currentDateTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime endDateTime = currentDateTime.plusHours(2);
+        var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-        RequestFactory.buildGet("http://localhost:8080/api/users").retrieve().toBodilessEntity();
-        System.out.println("Running");
         var allUsers = RequestFactory.buildGet("/users")
                 .retrieve()
                 .onStatus(HttpStatusCode::is2xxSuccessful,
-                        (request, response) -> System.out.println("Running"))
+                        (request, response) -> {
+
+                        })
                 .onStatus(HttpStatusCode::isError,
                         ((request, response) -> {
-                            System.out.println("Error querying");
                             log.error("Cannot retrieve all users: "  + response.getStatusText());
                         }))
                 .body(UserDto[].class);
+        System.out.println(Arrays.toString(allUsers));
         if (allUsers == null)
             return;
 
-        Arrays.stream(allUsers).parallel().map((user) ->{
+        Arrays.stream(allUsers).forEach((user) ->{
             var messageBuilder = new StringBuilder();
             var eventsNow = RequestFactory
-                    .buildGet(String.format("/event/find?userId={%d}&date={%s}&time={%s}"
-                            ,user.getId(),currentDate.toString(), currentTime.toString()))
+                    .buildGet(String.format("/event/range?userId=%d&start=%s&end=%s"
+                            ,user.getId(),currentDateTime, endDateTime))
                     .retrieve()
                     .onStatus(HttpStatusCode::isError,
                             (request, response) -> {
-                                System.out.println("error querying");
-                                log.error("Cannot get all events of user with id " + user.getId() + " at "+ currentDate + currentTime);
+                                log.error("Cannot get all events of user with id " + user.getId() + " from "+ currentDateTime + " to " + endDateTime);
                             })
                     .body(EventDto[].class);
             if (eventsNow == null)
-                return user;
+                return ;
 
-            for (var event: eventsNow){
-                messageBuilder
-                        .append("At ")
-                        .append(event.getStart())
-                        .append("in ")
-                        .append(event.getDuration())
-                        .append(": ")
-                        .append(event.getSummary())
+            messageBuilder.append("You have up comming events:\n");
+            var upcoming = Arrays.stream(eventsNow).filter(eventDto ->
+                            !history.containsKey(eventDto.getId()) ||
+                                    history.get(eventDto.getId()).isBefore(currentDateTime))
+                    .map(event -> {
+                        messageBuilder
+                                .append("At ")
+                                .append(event.getStart().format(formatter))
+                                .append(" in ")
+                                .append(DurationParser.beautify(event.getDuration()))
+                                .append(": ")
+                                .append(event.getSummary())
                         ;
+//                        Mark this event to be noticed after 1 hour
+                        history.put(event.getId(), event.getStart().plusHours(1));
+                        return event;
+                    }).toList();
+            if (!upcoming.isEmpty())
                 prepareAndSendMessage(this.telegramClient, user.getId(), messageBuilder.toString());
-            }
-            return user;
         });
     }
-
 
 
 }

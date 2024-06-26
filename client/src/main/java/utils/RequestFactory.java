@@ -6,16 +6,19 @@ import org.springframework.web.client.RestClient;
 
 @Component
 public final class RequestFactory {
-    private static final RestClient client = RestClient.create("http://localhost:8080/api");
-
-    private RequestFactory(){
-    }
-
+    private static final String baseUrl = "http://localhost:8080/api";
     public static RestClient.RequestBodySpec buildPost(String uri){
-        return client.post().uri(uri).contentType(MediaType.APPLICATION_JSON);
+        return RestClient.create(baseUrl).post().uri(uri).contentType(MediaType.APPLICATION_JSON);
     }
 
     public static RestClient.RequestHeadersSpec<?> buildGet(String uri){
-        return client.get().uri(uri);
+        return RestClient.create(baseUrl).get().uri(uri);
     }
+    public static RestClient.RequestHeadersSpec<?> buildDelete(String uri){
+        return RestClient.create(baseUrl).delete().uri(uri);
+    }
+    public static RestClient.RequestBodySpec buildPut(String uri){
+        return RestClient.create(baseUrl).put().uri(uri).contentType(MediaType.APPLICATION_JSON);
+    };
+    
 }

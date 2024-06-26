@@ -1,7 +1,6 @@
 package controller;
 
 import entity.Event;
-import entity.RepeatType;
 import exception.EventNotFound;
 import exception.UserNotFound;
 import lombok.extern.slf4j.Slf4j;
@@ -9,14 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import services.EventService;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @Slf4j
@@ -25,7 +21,7 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     @ResponseBody
     public Event getEventsById(
             @PathVariable("id") long eventId
@@ -51,33 +47,54 @@ public class EventController {
         }
     }
 
-    @PostMapping("/add")
+    @GetMapping("/range")
+    public @ResponseBody List<Event> getEventsFromTo(
+            @RequestParam(name = "userId") Long userId,
+            @RequestParam(name = "start") LocalDateTime start,
+            @RequestParam(name = "end") LocalDateTime end) throws DateTimeParseException, UserNotFound {
+        return eventService.getEventsInRange(userId, start, end);
+    }
+
+    @PostMapping
     @ResponseBody
     public Event addEvent(
             @RequestBody Event event
-    ) throws DateTimeParseException {
-        return eventService.addEvent(event);
+    ) throws DateTimeParseException, UserNotFound {
+//        validate
+        if (
+                event.getDuration() == null
+                ||event.getSummary() == null
+                ||event.getUser() == null
+                ||event.getStart() ==null
+        )
+            throw new IllegalArgumentException("Request doesn't have enough field of an Event");
+
+        return eventService.addEvent(event.getUser(), event.getSummary(), event.getStart(), event.getDuration(), event.getRepeat());
     }
 
-    @PostMapping("/test-add")
+    @DeleteMapping("/{id}")
     @ResponseBody
-    public Event testAddEvent(@RequestBody Event event) throws DateTimeParseException {
-        return eventService.addEvent(event);
-    }
-
-    @DeleteMapping("/delete")
-    public @ResponseBody void deleteEvent(
-            @RequestBody long eventId
-    ) {
+    public void deleteEvent(
+            @PathVariable("id") long eventId
+    ) throws EventNotFound {
         eventService.deleteEvent(eventId);
     }
 
-    @PutMapping("/edit/{id}")
-    public @ResponseBody Event editEvent(
+    @PutMapping("/{id}")
+    @ResponseBody
+    public Event editEvent(
             @PathVariable("id") long eventId,
-            @RequestBody Event newEvent
-    ) throws EventNotFound, DateTimeParseException {
-        var _event = eventService.getEventById(eventId);
-        return eventService.updateEvent(_event.getId(), newEvent);
+            @RequestBody Event event
+            ) throws EventNotFound, DateTimeParseException {
+        var newEvent = eventService.getEventById(eventId);
+        if (event.getSummary() != null)
+            newEvent = eventService.updateSummary(eventId, event.getSummary());
+        if (event.getDuration() != null)
+            newEvent = eventService.updateDuration(eventId, event.getDuration());
+        if (event.getStart() != null)
+            newEvent = eventService.updateStart(eventId, event.getStart());
+        if (event.getRepeat() != null)
+            newEvent = eventService.updateRepeat(eventId, event.getRepeat());
+        return newEvent;
     }
 }

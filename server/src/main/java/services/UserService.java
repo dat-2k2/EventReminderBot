@@ -4,7 +4,6 @@ import entity.User;
 import exception.UserNotFound;
 
 import java.util.List;
-
 public interface UserService {
 
     User addUser(long userId, String username, long chatId);
