@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class MessageHelpers {
         deleteButton.setCallbackData(new DeleteCallback(chatId, event.getId()).callbackPhrase());
 
         InlineKeyboardRow row = new InlineKeyboardRow(reschedule, deleteButton);
-        var time = TimeHelpers.getNextRecurrenceTime(event, LocalDateTime.now());
+        var time = TimeHelpers.getNextRecurrenceTime(event, LocalDateTime.now(ZoneId.of("Europe/Moscow")));
         String recurredNoti = (time == null) ? "Event is ended." : ("Next recurred at " + time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
         //        experimental
         var msg = new SendMessage(String.valueOf(chatId), event.toMessage() + "\n"+ recurredNoti );

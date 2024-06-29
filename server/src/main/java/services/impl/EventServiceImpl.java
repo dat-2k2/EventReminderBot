@@ -168,5 +168,5 @@ public class EventServiceImpl implements EventService {
         eventRepository.updateRepeat(eventId, repeatType);
         return eventRepository.findById(eventId).orElseThrow(() -> new EventNotFound(eventId));
     }
-
+    
 }

@@ -48,6 +48,7 @@ The application contains 2 parts: client and server. The server is a Spring Web 
 - /updatestart Update start date time to [date] and time to [time] of an event: updatestart "{date} {time}".
   Example: /updatestart 2023-01-01 12:00
 - /week Get all events in this week
+- /next Get next event
 - /find Find all of your events by date, by time or both. Recurred events is showed as the first recurrence. If no date or time is provided, get all of your events. 
   Use /find [date yyyy-MM-dd] + [time HH:mm] 
   Example: /find, /find 2024-06-26, /find 2024-06-26 12:00
