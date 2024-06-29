@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import utils.RequestFactory;
-import utils.SendMessageUtils;
+import utils.MessageHelpers;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -53,10 +53,10 @@ public class GetCommand extends BotCommand {
                 .body(EventDto[].class);
 
         if (events.length == 0){
-            SendMessageUtils.prepareAndSendMessage(telegramClient, chat.getId(), "You don't have any events");
+            MessageHelpers.prepareAndSendMessage(telegramClient, chat.getId(), "You don't have any events");
         }
         for (var event: events){
-            SendMessageUtils.sendEventToChat(telegramClient, chat.getId(), event);
+            MessageHelpers.sendEventToChat(telegramClient, chat.getId(), event);
         }
     }
 }

@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatusCode;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import utils.RequestFactory;
-import utils.SendMessageUtils;
+import utils.MessageHelpers;
 
 @Slf4j
 public record DeleteCallback(long chatId, long eventId) implements CallbackData{
@@ -19,12 +19,12 @@ public record DeleteCallback(long chatId, long eventId) implements CallbackData{
                 .retrieve()
                 .onStatus(HttpStatusCode::is2xxSuccessful,
                         (request, response) -> {
-                            SendMessageUtils.prepareAndSendMessage(client, chatId, "Event " + eventId + " deleted");
+                            MessageHelpers.prepareAndSendMessage(client, chatId, "Event " + eventId + " deleted");
                             log.error("Deleted " + eventId);
                         })
                 .onStatus(HttpStatusCode::isError,
                         (request, response) -> {
-                            SendMessageUtils.prepareAndSendMessage(client, chatId, "Cannot delete event " + eventId);
+                            MessageHelpers.prepareAndSendMessage(client, chatId, "Cannot delete event " + eventId);
                             log.error("Cannot delete event " + eventId);
                         })
                 .toBodilessEntity();

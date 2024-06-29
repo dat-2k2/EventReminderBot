@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import utils.DurationParser;
-import utils.SendMessageUtils;
+import utils.TimeHelpers;
+import utils.MessageHelpers;
 
 @Component
 @Slf4j
@@ -23,13 +23,13 @@ public class UpdateDurationCommand extends AbstractUpdateCommand{
     @Override
     protected EventDto newEvent(String newData) {
         var event = new EventDto();
-        event.setDuration(DurationParser.parse(newData));
+        event.setDuration(TimeHelpers.parse(newData));
         return event;
     }
 
     @Override
     protected void onSuccess(TelegramClient client, User user, Chat chat, EventDto event) {
-        SendMessageUtils.prepareAndSendMessage(client, chat.getId(), event.toString());
+        MessageHelpers.prepareAndSendMessage(client, chat.getId(), event.toString());
         log.info("Change duration of event " + event.getId() + " to " + event.getDuration());
     }
 

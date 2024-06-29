@@ -42,6 +42,8 @@ public class BotConfiguration {
     UpdateSummaryCommand updateSummaryCommand;
     @Autowired
     UpdateDurationCommand updateDurationCommand;
+    @Autowired
+    GetNextEventCommand getNextEventCommand;
     HelpCommand helpCommand;
     @Bean
     public BotSession startBotSession(TelegramBotsLongPollingApplication botApplication, BotService bot) throws TelegramApiException {
@@ -55,6 +57,7 @@ public class BotConfiguration {
                 helpCommand,
                 getTodayEventsCommand,
                 getEventsWeekCommand,
+                getNextEventCommand,
                 updateStartCommand,
                 updateSummaryCommand,
                 updateDurationCommand

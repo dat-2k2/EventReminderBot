@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import utils.RequestFactory;
-import utils.SendMessageUtils;
+import utils.MessageHelpers;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -43,12 +43,12 @@ public class GetEventsWeekCommand extends BotCommand {
                     .retrieve()
                     .onStatus(HttpStatus.NOT_FOUND::equals,
                             (request, response) -> {
-                                SendMessageUtils.prepareAndSendMessage(
+                                MessageHelpers.prepareAndSendMessage(
                                         telegramClient,chat.getId(), "Unauthenticated user");
                             })
                     .onStatus(HttpStatusCode::isError,
                             (request, response) -> {
-                                SendMessageUtils.prepareAndSendMessage(
+                                MessageHelpers.prepareAndSendMessage(
                                         telegramClient,chat.getId(), "Server error: cannot get the event");
                             })
                     .body(EventDto[].class);
@@ -60,12 +60,12 @@ public class GetEventsWeekCommand extends BotCommand {
         }
 
         if (all.isEmpty()){
-            SendMessageUtils.prepareAndSendMessage(
+            MessageHelpers.prepareAndSendMessage(
                     telegramClient,chat.getId(), "You don't have any events between these days.");
         }
 
         all.forEach(event ->{
-            SendMessageUtils.sendEventToChat(telegramClient, chat.getId(), event);
+            MessageHelpers.sendEventToChat(telegramClient, chat.getId(), event);
         });
     }
 }

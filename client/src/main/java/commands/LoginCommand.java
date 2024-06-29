@@ -15,8 +15,8 @@ import utils.RequestFactory;
 
 import java.util.List;
 
-import static utils.SendMessageUtils.prepareAndSendMessage;
-import static utils.SendMessageUtils.sendMessage;
+import static utils.MessageHelpers.prepareAndSendMessage;
+import static utils.MessageHelpers.sendMessage;
 
 
 @Slf4j

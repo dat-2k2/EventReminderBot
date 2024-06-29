@@ -10,9 +10,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.extensions.bots.commandbot.CommandLongPollingTelegramBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import utils.DurationParser;
+import utils.TimeHelpers;
 import utils.RequestFactory;
-import utils.SendMessageUtils;
+import utils.MessageHelpers;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static utils.SendMessageUtils.prepareAndSendMessage;
+import static utils.MessageHelpers.prepareAndSendMessage;
 
 
 /**
@@ -31,8 +31,7 @@ import static utils.SendMessageUtils.prepareAndSendMessage;
 @Slf4j
 public class BotService extends CommandLongPollingTelegramBot {
     static Clock clock = Clock.system(ZoneId.of("Europe/Moscow"));
-
-    private Map<Long, LocalDateTime> history = new HashMap<>();
+    private static Map<Long, LocalDateTime> history = new HashMap<>();
     private static final String ERROR_TEXT = "Error when sending message: ";
     //    services
 //    private final EventService events;
@@ -55,7 +54,7 @@ public class BotService extends CommandLongPollingTelegramBot {
 
     @Override
     public void processInvalidCommandUpdate(Update update) {
-        SendMessageUtils.prepareAndSendMessage(telegramClient, update.getMessage().getChatId(), "Invalid comment. See " + CommandId.HELP);
+        MessageHelpers.prepareAndSendMessage(telegramClient, update.getMessage().getChatId(), "Invalid comment. See " + CommandId.HELP);
     }
 
     /**
@@ -63,7 +62,6 @@ public class BotService extends CommandLongPollingTelegramBot {
      */
     @Scheduled(fixedRate = 997)
     private void notice(){
-
         LocalDateTime currentDateTime = LocalDateTime.now();
         LocalDateTime endDateTime = currentDateTime.plusHours(2);
         var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -99,25 +97,26 @@ public class BotService extends CommandLongPollingTelegramBot {
 
             messageBuilder.append("You have up comming events:\n");
             var upcoming = Arrays.stream(eventsNow).filter(eventDto ->
+//                    Either not remind yet, or current time exceeds the next scheduled remind.
                             !history.containsKey(eventDto.getId()) ||
-                                    history.get(eventDto.getId()).isBefore(currentDateTime))
+                                    history.get(eventDto.getId()).isEqual(currentDateTime))
                     .map(event -> {
                         messageBuilder
                                 .append("At ")
-                                .append(event.getStart().format(formatter))
+                                .append(
+                                        TimeHelpers.getRecurrenceTimeNearThisDay(event, currentDateTime).format(formatter)
+                                )
                                 .append(" in ")
-                                .append(DurationParser.beautify(event.getDuration()))
+                                .append(TimeHelpers.beautify(event.getDuration()))
                                 .append(": ")
                                 .append(event.getSummary())
                         ;
-//                        Mark this event to be noticed after 1 hour
-                        history.put(event.getId(), event.getStart().plusHours(1));
+//                        Mark this event to be noticed after 30 minutes
+                        history.put(event.getId(), event.getStart().plusMinutes(30));
                         return event;
                     }).toList();
             if (!upcoming.isEmpty())
                 prepareAndSendMessage(this.telegramClient, user.getId(), messageBuilder.toString());
         });
     }
-
-
 }

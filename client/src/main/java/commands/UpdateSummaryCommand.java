@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import utils.SendMessageUtils;
+import utils.MessageHelpers;
 
 @Component
 @Slf4j
@@ -25,12 +25,12 @@ public class UpdateSummaryCommand extends AbstractUpdateCommand {
 
     @Override
     public void onSuccess(TelegramClient client, User user, Chat chat, EventDto event) {
-        SendMessageUtils.sendEventToChat(client, chat.getId(), event);
+        MessageHelpers.sendEventToChat(client, chat.getId(), event);
         log.info("Change summary of event " + event.getId() + " to " + event.getSummary());
     }
 
     public void onError(TelegramClient client, User user, Chat chat, EventDto event) {
-        SendMessageUtils.prepareAndSendMessage(client, chat.getId(), "Cannot update event " + event.getId());
+        MessageHelpers.prepareAndSendMessage(client, chat.getId(), "Cannot update event " + event.getId());
         log.error("Cannot change repeat type of event " + event.getId() + " to " + event.getRepeat());
     }
 
