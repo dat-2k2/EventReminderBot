@@ -9,15 +9,14 @@ import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import utils.RequestFactory;
 import utils.MessageHelpers;
+import utils.RequestFactory;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 import static utils.TimeHelpers.getNextRecurrenceTime;
-import static utils.TimeHelpers.getRecurrenceTimeNearThisDay;
 
 @Component
 @Slf4j
@@ -57,19 +56,17 @@ public class GetNextEventCommand extends BotCommand {
         }
 
         EventDto nearest = valid.get(0);
-        LocalDateTime recurredTime  = getRecurrenceTimeNearThisDay(nearest, now);
+        LocalDateTime recurredTime  = getNextRecurrenceTime(nearest, now);
         for (var e: all){
 //            calculate the nearest moment of this event:
-            LocalDateTime next = getRecurrenceTimeNearThisDay(nearest, now);
+            LocalDateTime next = getNextRecurrenceTime(nearest, now);
             if (next.isAfter(now) && next.isBefore(nearest.getStart())){
                 nearest = e;
                 recurredTime = next;
             }
         }
 
-        var msg = MessageHelpers.messageWithEvent(chat.getId(), nearest);
-        msg.setText(msg.getText() + "\nRecurred at " + recurredTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-        MessageHelpers.sendMessage(telegramClient, msg);
+        MessageHelpers.sendEventToChat(telegramClient, chat.getId(), nearest);
     }
 
 

@@ -9,11 +9,12 @@ import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import utils.RequestFactory;
 import utils.MessageHelpers;
+import utils.RequestFactory;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,8 +32,8 @@ public class GetEventsWeekCommand extends BotCommand {
     public void execute(TelegramClient telegramClient, User user, Chat chat, String[] strings) {
 
          // first day
-        LocalDate start = LocalDate.now(/* tz */).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)); ;
-        LocalDate end = LocalDate.now(/* tz */).with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)); ;;
+        LocalDate start = LocalDate.now(ZoneId.of("Europe/Moscow")).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)); ;
+        LocalDate end = LocalDate.now(ZoneId.of("Europe/Moscow")).with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY)); ;;
 
         LocalDate tmp = start;
         List<EventDto> all = new ArrayList<>();
