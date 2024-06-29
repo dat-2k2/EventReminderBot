@@ -11,10 +11,12 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Slf4j
-public class SendMessageUtils {
+public class MessageHelpers {
 
     public static void prepareAndSendMessage(TelegramClient client, long chatId, String textToSend){
         SendMessage message = new SendMessage(String.valueOf(chatId), textToSend);
@@ -35,19 +37,24 @@ public class SendMessageUtils {
     }
 
     public static void sendEventToChat(TelegramClient client, long chatId, EventDto event){
+        MessageHelpers.sendMessage(client, messageWithEvent(chatId, event));
+    }
+
+    public static SendMessage messageWithEvent(long chatId, EventDto event){
         InlineKeyboardButton reschedule = new InlineKeyboardButton("Reschedule");
         reschedule.setCallbackData(new SendScheduleOptionCallback(chatId, event.getId()).callbackPhrase());
         InlineKeyboardButton deleteButton = new InlineKeyboardButton("Delete");
         deleteButton.setCallbackData(new DeleteCallback(chatId, event.getId()).callbackPhrase());
 
         InlineKeyboardRow row = new InlineKeyboardRow(reschedule, deleteButton);
-
-        var msg = new SendMessage(String.valueOf(chatId), event.toMessage());
+        var time = TimeHelpers.getNextRecurrenceTime(event, LocalDateTime.now());
+        String recurredNoti = (time == null) ? "Event is ended." : ("Next recurred at " + time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        //        experimental
+        var msg = new SendMessage(String.valueOf(chatId), event.toMessage() + "\n"+ recurredNoti );
         msg.setReplyMarkup(new InlineKeyboardMarkup(List.of(row)));
 
-        SendMessageUtils.sendMessage(client, msg);
+        return msg;
     }
-
     /**
      * Format 2D3H4M
      * @param input

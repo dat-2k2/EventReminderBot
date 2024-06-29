@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import utils.RequestFactory;
-import utils.SendMessageUtils;
+import utils.MessageHelpers;
 
 public abstract class AbstractUpdateCommand extends BotCommand {
     public AbstractUpdateCommand(String commandIdentifier, String description) {
@@ -26,14 +26,14 @@ public abstract class AbstractUpdateCommand extends BotCommand {
             Long.parseLong(strings[0]);
         }
         catch (Exception e){
-            SendMessageUtils.prepareAndSendMessage(client, chat.getId(),"Require event id ");
+            MessageHelpers.prepareAndSendMessage(client, chat.getId(),"Require event id ");
         }
 
         try {
              _event = newEvent((strings.length == 2)?strings[1]:(strings[1]+" " + strings[2]));
         }
         catch (Exception e){
-            SendMessageUtils.prepareAndSendMessage(client, chat.getId(),"Cannot parse new data field "+strings[1]+ "\n" +
+            MessageHelpers.prepareAndSendMessage(client, chat.getId(),"Cannot parse new data field "+strings[1]+ "\n" +
                     "For start, requires \"yyyy-MM-dd HH:mm\"; for duration, requires ISO 8601 format.");
             return;
         }

@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import utils.SendMessageUtils;
+import utils.MessageHelpers;
 
 import java.util.List;
 
@@ -40,6 +40,6 @@ public record SendScheduleOptionCallback(long chatId, long eventId) implements C
         InlineKeyboardMarkup markup = new InlineKeyboardMarkup(List.of(row1,row2));
         message.setReplyMarkup(markup);
 
-        SendMessageUtils.sendMessage(client, message);
+        MessageHelpers.sendMessage(client, message);
     }
 }

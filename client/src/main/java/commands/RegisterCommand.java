@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import utils.RequestFactory;
-import utils.SendMessageUtils;
+import utils.MessageHelpers;
 
 @Slf4j
 @Component
@@ -54,6 +54,6 @@ public class RegisterCommand extends BotCommand {
                     })
                 .toBodilessEntity();
         var answer = new SendMessage(chat.getId().toString(), messageTextBuilder.toString());
-        SendMessageUtils.sendMessage(telegramClient, answer);
+        MessageHelpers.sendMessage(telegramClient, answer);
     }
 }

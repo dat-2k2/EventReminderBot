@@ -2,7 +2,7 @@ package dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import utils.DurationParser;
+import utils.TimeHelpers;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -22,7 +22,7 @@ public class EventDto {
         return "Event ID: " + id + "\n" +
                 "Summary: " + summary + "\n" +
                 "Start at " + start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + "\n" +
-                "Duration: " + DurationParser.beautify(duration) +
+                "Duration: " + TimeHelpers.beautify(duration) +
                 "\n" +
                 "Repeat: " + repeat;
     }

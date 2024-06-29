@@ -12,4 +12,5 @@ public interface CommandId {
     String UPDATE_START = "updatestart";
     String UPDATE_DURATION = "updateduration";
     String UPDATE_SUMMARY = "updatesummary";
+    String NEXT = "next";
 }

@@ -10,13 +10,13 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import utils.RequestFactory;
-import utils.SendMessageUtils;
+import utils.MessageHelpers;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static utils.SendMessageUtils.prepareAndSendMessage;
+import static utils.MessageHelpers.prepareAndSendMessage;
 
 @Component
 @Slf4j
@@ -64,7 +64,7 @@ public class AddCommand extends BotCommand {
                         })
                 .body(EventDto.class);
 
-        SendMessageUtils.sendEventToChat(telegramClient, chat.getId(), newEvent);
+        MessageHelpers.sendEventToChat(telegramClient, chat.getId(), newEvent);
     }
     
 

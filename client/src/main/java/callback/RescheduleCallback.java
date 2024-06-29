@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatusCode;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import utils.RequestFactory;
-import utils.SendMessageUtils;
+import utils.MessageHelpers;
 
 @Slf4j
 public record RescheduleCallback(long chatId, long eventId, RepeatTypeDto type) implements CallbackData {
@@ -18,7 +18,7 @@ public record RescheduleCallback(long chatId, long eventId, RepeatTypeDto type) 
     }
 
     public void onSuccess(TelegramClient client, EventDto event) {
-        SendMessageUtils.sendEventToChat(client, chatId, event);
+        MessageHelpers.sendEventToChat(client, chatId, event);
         log.info("Change repeat type of event " + event.getId() + " to " + event.getRepeat());
     }
 
@@ -32,7 +32,7 @@ public record RescheduleCallback(long chatId, long eventId, RepeatTypeDto type) 
                 .retrieve()
                 .onStatus(HttpStatusCode::isError,
                         (request, response) -> {
-                            SendMessageUtils.prepareAndSendMessage(client, chatId, "Cannot update event with id" + eventId);
+                            MessageHelpers.prepareAndSendMessage(client, chatId, "Cannot update event with id" + eventId);
                             log.error("Cannot change repeat type of event " + eventId + " to " + type);
                         })
                 .onStatus(HttpStatusCode::is2xxSuccessful,

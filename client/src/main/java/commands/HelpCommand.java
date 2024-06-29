@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import utils.SendMessageUtils;
+import utils.MessageHelpers;
 
 
 @Setter
@@ -31,6 +31,6 @@ public class HelpCommand extends BotCommand {
         SendMessage msg = new SendMessage(String.valueOf(chat.getId()) , messageBuilder.toString());
         msg.enableHtml(true);
 
-        SendMessageUtils.sendMessage(telegramClient, msg);
+        MessageHelpers.sendMessage(telegramClient, msg);
     }
 }

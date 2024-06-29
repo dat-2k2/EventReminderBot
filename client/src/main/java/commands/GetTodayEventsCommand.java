@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import utils.RequestFactory;
-import utils.SendMessageUtils;
+import utils.MessageHelpers;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -28,12 +28,12 @@ public class GetTodayEventsCommand extends BotCommand {
                 .body(EventDto[].class);
 
         if (events.length == 0){
-            SendMessageUtils.prepareAndSendMessage(telegramClient, chat.getId(),
+            MessageHelpers.prepareAndSendMessage(telegramClient, chat.getId(),
                     "You have no events today.");
         }
 
         for (var event: events){
-            SendMessageUtils.sendEventToChat(telegramClient, chat.getId(), event);
+            MessageHelpers.sendEventToChat(telegramClient, chat.getId(), event);
         }
     }
 }

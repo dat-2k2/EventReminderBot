@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import utils.SendMessageUtils;
+import utils.MessageHelpers;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,13 +30,13 @@ public class UpdateStartCommand extends AbstractUpdateCommand {
 
     @Override
     protected void onSuccess(TelegramClient client, User user, Chat chat, EventDto event) {
-        SendMessageUtils.sendEventToChat(client, chat.getId(), event);
+        MessageHelpers.sendEventToChat(client, chat.getId(), event);
         log.info("Change start of event " + event.getId() + " to " + event.getStart());
     }
 
     @Override
     protected void onError(TelegramClient client, User user, Chat chat, EventDto event) {
-        SendMessageUtils.prepareAndSendMessage(client, chat.getId(), "Cannot update start of event with id " + event.getId());
+        MessageHelpers.prepareAndSendMessage(client, chat.getId(), "Cannot update start of event with id " + event.getId());
 
     }
 }
