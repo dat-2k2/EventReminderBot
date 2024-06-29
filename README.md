@@ -42,11 +42,10 @@ The application contains 2 parts: client and server. The server is a Spring Web 
 ## Usage
 - /add Add an event with these fields, separated by whitespace:
   {Summary (no whitespace} {Date(yyyy-MM-dd)} {Time(HH:mm)} {Duration(ISO-8601)}.
-  Example: /add test-event 2024-06-26 12:31 PT10H
-- /add test-event 2024-06-26 23:11 P1DT2H.
+  Example: /add test-event 2024-06-26 12:31 PT10H , /add test-event 2024-06-26 23:11 P1DT2H.
 - /help Show all commands and usage.
-- /updatestart Update start date time to [date] and time to [time] of an event: updatestart "{date} {time}".
-  Example: /updatestart 2023-01-01 12:00
+- /updatestart Update start date time to [date] and time to [time] of an event: /updatestart {event id} {date} {time}.
+  Example: /updatestart 1 2023-01-01 12:00
 - /week Get all events in this week
 - /next Get next event
 - /find Find all of your events by date, by time or both. Recurred events is showed as the first recurrence. If no date or time is provided, get all of your events. 

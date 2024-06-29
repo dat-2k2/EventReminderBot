@@ -15,9 +15,9 @@ import java.time.format.DateTimeFormatter;
 public class UpdateStartCommand extends AbstractUpdateCommand {
     public UpdateStartCommand() {
         super(CommandId.UPDATE_START,
-                "Update start date time to [date] and time to [time] of an event: \n"
-                        +CommandId.UPDATE_START+" \"{date} {time}\"" +
-                "Example: /"+CommandId.UPDATE_START +" 2023-01-01 12:00");
+                "Update start date time to [date] and time to [time] of an event: \n/"
+                        +CommandId.UPDATE_START+" {event id} {date} {time}.\n" +
+                "Example: /"+CommandId.UPDATE_START +" 1 2023-01-01 12:00");
     }
 
     @Override

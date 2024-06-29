@@ -23,7 +23,7 @@ import static utils.MessageHelpers.prepareAndSendMessage;
 public class AddCommand extends BotCommand {
     public AddCommand() {
         super(CommandId.ADD, "Add an event with these fields, separated by whitespace:\n"
-        + "{Summary (no whitespace} {Date(yyyy-MM-dd)} {Time(HH:mm)} {Duration(ISO-8601)}\n."
+        + "{Summary (no whitespace) {Date(yyyy-MM-dd)} {Time(HH:mm)} {Duration(ISO-8601)}.\n"
         + "Example: /" + CommandId.ADD+" test-event 2024-06-26 12:31 PT10H\n"
         +   "/" + CommandId.ADD+" test-event 2024-06-26 23:11 P1DT2H.");
     }
