@@ -14,6 +14,7 @@ import utils.TimeHelpers;
 import utils.RequestFactory;
 import utils.MessageHelpers;
 
+import java.sql.Time;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -60,9 +61,9 @@ public class BotService extends CommandLongPollingTelegramBot {
     /**
      * This method will create an Executor to execute the function.
      */
-    @Scheduled(fixedRate = 997)
+    @Scheduled(fixedRate = 120)
     private void notice(){
-        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime currentDateTime = LocalDateTime.now(ZoneId.of("Europe/Moscow"));
         LocalDateTime endDateTime = currentDateTime.plusHours(2);
         var formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -77,15 +78,14 @@ public class BotService extends CommandLongPollingTelegramBot {
                             log.error("Cannot retrieve all users: "  + response.getStatusText());
                         }))
                 .body(UserDto[].class);
-        System.out.println(Arrays.toString(allUsers));
         if (allUsers == null)
             return;
 
         Arrays.stream(allUsers).forEach((user) ->{
             var messageBuilder = new StringBuilder();
             var eventsNow = RequestFactory
-                    .buildGet(String.format("/event/range?userId=%d&start=%s&end=%s"
-                            ,user.getId(),currentDateTime, endDateTime))
+                    .buildGet(String.format("/event/find?userId=%d"
+                            ,user.getId()))
                     .retrieve()
                     .onStatus(HttpStatusCode::isError,
                             (request, response) -> {
@@ -94,12 +94,23 @@ public class BotService extends CommandLongPollingTelegramBot {
                     .body(EventDto[].class);
             if (eventsNow == null)
                 return ;
+            messageBuilder.append("You have upcoming events:\n");
+            var upcoming = Arrays.stream(eventsNow)
+                    .filter(eventDto -> {
+                        var next = TimeHelpers.getNextRecurrenceTime(eventDto, currentDateTime);
+                        //If the next recurrence is after the endDateTime, no need to remind yet
+                        if(next == null || next.isAfter(endDateTime)){
+                            history.remove(eventDto.getId());
+                        }
+                        return (next != null && next.isAfter(currentDateTime)) &&
+                                (next.isBefore(endDateTime) || next.isEqual(endDateTime));
 
-            messageBuilder.append("You have up comming events:\n");
-            var upcoming = Arrays.stream(eventsNow).filter(eventDto ->
-//                    Either not remind yet, or current time exceeds the next scheduled remind.
+                    })
+                    .filter(eventDto ->
+//                    Either not remind yet, or the current schedule is coming
                             !history.containsKey(eventDto.getId()) ||
-                                    history.get(eventDto.getId()).isEqual(currentDateTime))
+                                    history.get(eventDto.getId()).isEqual(currentDateTime)
+                    )
                     .map(event -> {
                         messageBuilder
                                 .append("At ")
@@ -111,8 +122,15 @@ public class BotService extends CommandLongPollingTelegramBot {
                                 .append(": ")
                                 .append(event.getSummary())
                         ;
-//                        Mark this event to be noticed after 30 minutes
-                        history.put(event.getId(), event.getStart().plusMinutes(30));
+//                        Mark this event to be noticed after 10 minutes
+                        history.put(event.getId(), currentDateTime.plusMinutes(15));
+//                        If the next recurrence happens before the next scheduled remind, set it as the current
+                        var next = TimeHelpers.getNextRecurrenceTime(event, currentDateTime);
+
+                        if(next != null && next.isBefore(history.get(event.getId()))){
+                            history.put(event.getId(), next);
+                        }
+
                         return event;
                     }).toList();
             if (!upcoming.isEmpty())

@@ -97,8 +97,7 @@ public class EventServiceImpl implements EventService {
     @Deprecated
     @Override
     public List<Event> getEventsInRange(long userId, LocalDateTime start, LocalDateTime end) throws UserNotFound {
-        if (!userRepository.existsById(userId)) throw new UserNotFound(userId);
-        return eventRepository.findEventsFromTo(userRepository.getReferenceById(userId), start, end);
+        return eventRepository.findEventsFromTo(userRepository.findById(userId).orElseThrow(() -> new UserNotFound(userId)), start, end);
     }
 
     @Override
