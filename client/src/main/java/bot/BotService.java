@@ -122,7 +122,7 @@ public class BotService extends CommandLongPollingTelegramBot {
                                 .append(": ")
                                 .append(event.getSummary())
                         ;
-//                        Mark this event to be noticed after 10 minutes
+//                        Mark this event to be noticed after 15 minutes
                         history.put(event.getId(), currentDateTime.plusMinutes(15));
 //                        If the next recurrence happens before the next scheduled remind, set it as the current
                         var next = TimeHelpers.getNextRecurrenceTime(event, currentDateTime);

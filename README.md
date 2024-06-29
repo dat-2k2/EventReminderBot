@@ -33,7 +33,7 @@ The application contains 2 parts: client and server. The server is a Spring Web 
 - Update recurring events
 - Delete recurring events
 ### Reminder
-- Remind about upcoming event (1 hour in advance)
+- Remind about upcoming event (2 hours in advance per 15 minutes)
   
 ## Limitation
 - If an event was recurred at moment X, message about that event will be shown but the start date is its first recurrence.
