@@ -29,7 +29,7 @@ public class Event {
     private Duration duration;
 
     @Enumerated(EnumType.ORDINAL)
-    private RepeatType repeat = RepeatType.NONE;
+    private RepeatType repeat;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

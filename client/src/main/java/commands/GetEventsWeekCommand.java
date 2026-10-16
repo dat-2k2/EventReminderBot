@@ -53,11 +53,11 @@ public class GetEventsWeekCommand extends BotCommand {
                                         telegramClient,chat.getId(), "Server error: cannot get the event");
                             })
                     .body(EventDto[].class);
+            tmp = tmp.plusDays(1);
             if (events==null)
                 continue;
 
             all.addAll(Arrays.stream(events).filter(eventDto -> !all.contains(eventDto)).toList());
-            tmp = tmp.plusDays(1);
         }
 
         if (all.isEmpty()){

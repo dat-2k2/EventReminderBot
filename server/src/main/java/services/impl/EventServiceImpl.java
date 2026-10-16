@@ -36,7 +36,7 @@ public class EventServiceImpl implements EventService {
         var newEvent = new Event();
         newEvent.setDuration(duration);
         newEvent.setSummary(summary);
-        newEvent.setRepeat(repeatType);
+        newEvent.setRepeat(repeatType == null ? RepeatType.NONE : repeatType);
         newEvent.setStart(start);
         newEvent.setUser(_user);
         return eventRepository.save(newEvent);
@@ -55,11 +55,13 @@ public class EventServiceImpl implements EventService {
 
     private boolean onThisDay(Event e, LocalDate date){
         var start = e.getStart().toLocalDate();
+        if (date.isBefore(start))
+            return false;
         return switch (e.getRepeat()){
             case NONE ->  start.equals(date);
             case HOURLY, DAILY -> true;
             case WEEKLY -> start.getDayOfWeek().equals(date.getDayOfWeek());
-            case MONTHLY -> start.getDayOfMonth() == date.getDayOfMonth();
+            case MONTHLY -> Math.min(start.getDayOfMonth(), date.lengthOfMonth()) == date.getDayOfMonth();
         };
     }
 

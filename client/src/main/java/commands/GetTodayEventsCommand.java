@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import utils.MessageHelpers;
 import utils.RequestFactory;
+import utils.TimeHelpers;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -21,7 +22,7 @@ public class GetTodayEventsCommand extends BotCommand {
 
     @Override
     public void execute(TelegramClient telegramClient, User user, Chat chat, String[] strings) {
-        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String today = LocalDate.now(TimeHelpers.ZONE).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
         var events = RequestFactory.buildGet("/event/find?userId="+user.getId()+"&date="+today)
                 .retrieve()

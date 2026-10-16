@@ -24,7 +24,7 @@ public class RegisterCommand extends BotCommand {
         String userName = user.getUserName();
 
         if (userName == null || userName.isEmpty()) {
-            userName = user.getFirstName() + " " + user.getLastName();
+            userName = user.getLastName() == null ? user.getFirstName() : user.getFirstName() + " " + user.getLastName();
         }
 
         StringBuilder messageTextBuilder = new StringBuilder();
@@ -33,7 +33,7 @@ public class RegisterCommand extends BotCommand {
         RequestFactory
             .buildPost("/signup")
             .body(
-                    new UserDto(user.getId(), user.getUserName(), chat.getId())
+                    new UserDto(user.getId(), finalUserName, chat.getId())
             )
             .retrieve()
             .onStatus(httpStatusCode -> httpStatusCode != HttpStatus.OK,

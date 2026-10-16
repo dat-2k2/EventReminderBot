@@ -11,8 +11,8 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import utils.MessageHelpers;
 import utils.RequestFactory;
+import utils.TimeHelpers;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -49,7 +49,7 @@ public class AddCommand extends BotCommand {
         event.setUser(user_);
         event.setSummary(strings[0]);
         event.setStart(LocalDateTime.parse(strings[1]+" "+strings[2], DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
-        event.setDuration(Duration.parse(strings[3]));
+        event.setDuration(TimeHelpers.parse(strings[3]));
 
         var newEvent = RequestFactory.buildPost("/event")
                 .body(event)

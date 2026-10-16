@@ -11,10 +11,11 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import utils.MessageHelpers;
 import utils.RequestFactory;
+import utils.TimeHelpers;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Comparator;
 
 import static utils.TimeHelpers.getNextRecurrenceTime;
 
@@ -30,7 +31,7 @@ public class GetNextEventCommand extends BotCommand {
     public void execute(TelegramClient telegramClient, User user, Chat chat, String[] strings) {
 
         // first day
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(TimeHelpers.ZONE);
 
         EventDto[] all = RequestFactory.buildGet(
                         String.format("/event/find?userId=%d", user.getId()))
@@ -48,25 +49,16 @@ public class GetNextEventCommand extends BotCommand {
                 .body(EventDto[].class);
 
         assert all != null;
-        var valid = Arrays.stream(all).filter(eventDto -> getNextRecurrenceTime(eventDto, now) != null).toList();
+        var nearest = Arrays.stream(all)
+                .filter(eventDto -> getNextRecurrenceTime(eventDto, now) != null)
+                .min(Comparator.comparing(eventDto -> getNextRecurrenceTime(eventDto, now)));
 
-        if (valid.isEmpty()){
+        if (nearest.isEmpty()){
             MessageHelpers.prepareAndSendMessage(telegramClient, chat.getId(), "You don't have any coming event");
             return;
         }
 
-        EventDto nearest = valid.get(0);
-        LocalDateTime recurredTime  = getNextRecurrenceTime(nearest, now);
-        for (var e: all){
-//            calculate the nearest moment of this event:
-            LocalDateTime next = getNextRecurrenceTime(nearest, now);
-            if (next.isAfter(now) && next.isBefore(nearest.getStart())){
-                nearest = e;
-                recurredTime = next;
-            }
-        }
-
-        MessageHelpers.sendEventToChat(telegramClient, chat.getId(), nearest);
+        MessageHelpers.sendEventToChat(telegramClient, chat.getId(), nearest.get());
     }
 
 

@@ -15,7 +15,7 @@ public class EventDto {
     private String summary;
     private LocalDateTime start;
     private Duration duration;
-    private RepeatTypeDto repeat = RepeatTypeDto.NONE;
+    private RepeatTypeDto repeat;
     private UserDto user;
 
     public String toMessage(){
